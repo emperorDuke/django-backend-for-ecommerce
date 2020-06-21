@@ -1,14 +1,36 @@
 from rest_framework import serializers
 
-from ..models.store import Store
+from ..models.store import Store, Advert
 
 from Users.models.address import Address
 from Users.serializers.userSerializer import AddressSerializer
 from Users.serializers.sellerSerializer import SellerSerializer
 
-from Adverts.serializers import AdvertSerializer
-
 from Ratings.serializers.ratingSerializer import StoreRatingSerializer
+
+
+class AdvertSerializer (serializers.ModelSerializer):
+
+    class Meta:
+        model = Advert
+        fields = '__all__'
+        validators = []
+
+    def validate(self, data):
+
+        request = self.context['request']
+
+        if request.method == 'post':
+
+            user = request.user
+
+            advert_count = Advert.objects.filter(store=user.store).count()
+
+            if advert_count > 2 and not user.groups.filter(name='premium_user').exists():
+                raise serializers.ValidationError(
+                    "maximum adverts exceeded for your plan")
+
+        return super().validate(data)
 
 
 class StoreSerializer(serializers.ModelSerializer):

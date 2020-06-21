@@ -14,6 +14,9 @@ class KeyFeatureListSerializer(serializers.ListSerializer):
         return KeyFeature.objects.bulk_create(ret)
 
     def update(self, instance, validated_data):
+        
+        # collect data to be deleted
+        
         data_for_deletion = []
 
         for i, data in enumerate(validated_data):

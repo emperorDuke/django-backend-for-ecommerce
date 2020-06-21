@@ -152,6 +152,15 @@ class ProductTestCase(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Product.objects.get(pk=1).viewed.n_views, 1)
+    
+    def test_listings(self):
+
+        self.client.post('/products/', self.product_data)
+
+        response = self.client.get('/products/listings/')
+
+        self.assertEqual(response.status_code, status.HTTP_200_OK)
+        self.assertTrue(response.data[0]['latest deals'])
 
 
 class AttributeTestCase(APITestCase):

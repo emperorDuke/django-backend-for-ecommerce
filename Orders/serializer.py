@@ -21,11 +21,12 @@ from Location.serializers import LocationSerializer
 class OrderItemSerializer(serializers.ModelSerializer):
 
     order = serializers.PrimaryKeyRelatedField(read_only=True)
+    name = serializers.CharField()
     cart_content = CartSerializer(read_only=True)
 
     class Meta:
         model = OrderedItem
-        fields = '__all__'
+        exclude = ('variants', 'product', 'quantity', 'price')
         validators = []
 
 

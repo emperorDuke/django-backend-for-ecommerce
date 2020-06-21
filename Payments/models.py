@@ -16,7 +16,7 @@ class Payment(models.Model):
         (NOT_PAID, 'NOT_PAID')
     )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='orders',
-                             verbose_name='buyer', on_delete=models.CASCADE)
+                             verbose_name='user', on_delete=models.CASCADE)
     ref_no = models.CharField(_('reference number'),
                               max_length=50, unique=True, default='dfr44f')
     amount = models.FloatField()

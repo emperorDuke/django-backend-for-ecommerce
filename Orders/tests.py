@@ -160,18 +160,6 @@ class OrderTestCase(APITestCase):
 
         ShippingDetail.objects.create(**cls.shipping_detail)
 
-        location_data = [
-            {
-                'address': 'no 34 beckham street, ikeja Lagos',
-                'country': 'Nigeria',
-                'city': 'Ikeja',
-                'state': 'Lagos',
-                'zip_code': '35467'
-            }
-        ]
-
-        cls.location_obj = Location.objects.create(**location_data[0])
-
         cls.token = 'JWT ' + cls.buyer.token
 
     def setUp(self):
@@ -193,6 +181,17 @@ class OrderTestCase(APITestCase):
         """
         shipping_details can be updated or created from order
         """
+        location_data = [
+            {
+                'address': 'no 34 beckham street, ikeja Lagos',
+                'country': 'Nigeria',
+                'city': 'Ikeja',
+                'state': 'Lagos',
+                'zip_code': '35467'
+            }
+        ]
+
+        location_obj = Location.objects.create(**location_data[0])
 
         self.client.post('/order/')
 
@@ -200,11 +199,11 @@ class OrderTestCase(APITestCase):
             'id': 1,
             'delivery_method': orders.Order.PUS,
             'payment_method': orders.Order.PAYNOW,
-            '[pickup_site][address]':'no 34 beckham street, ikeja Lagos',
+            '[pickup_site][address]': 'no 34 beckham street, ikeja Lagos',
             '[pickup_site][country]': 'Nigeria',
             '[pickup_site][state]': 'Lagos',
             '[pickup_site][city]': 'Ikeja',
-            '[pickup_site][id]': 1,
+            '[pickup_site][id]': location_obj.pk,
             '[shipping_detail][id]': 1,
             '[shipping_detail][first_name]': 'Duncan',
             '[shipping_detail][last_name]': 'Effiom',
@@ -216,14 +215,100 @@ class OrderTestCase(APITestCase):
             '[shipping_detail][address][country]': 'Nigeria',
             '[shipping_detail][address][state]': 'Calabar'
         }
+        
         response = self.client.patch('/order/1/', order)
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data['shipping_detail']['default'], False)
-        self.assertEqual(response.data['shipping_detail']['first_name'], 'Duncan')
+        self.assertEqual(
+            response.data['shipping_detail']['first_name'], 'Duncan')
 
     def test_list(self):
+
+        # expected response data structure
+        data = [
+            {
+                'buyer': 1,
+                'items': [
+                    {
+                        'id': 1,
+                        'order': 1,
+                        'name': 'samsung galaxy s3',
+                        'cart_content': {
+                            'id': 1,
+                            'variants': [
+                                {
+                                    'id': 1,
+                                    'vendor_metric': 'L',
+                                    'metric_verbose_name': 'Large',
+                                    'attachment': None,
+                                    'attribute': 1
+                                },
+                                {
+                                    'id': 2,
+                                    'vendor_metric': 'S',
+                                    'metric_verbose_name': 'Small',
+                                    'attachment': None,
+                                    'attribute': 1
+                                },
+                                {
+                                    'id': 3,
+                                    'vendor_metric': 'XL',
+                                    'metric_verbose_name': 'extra large',
+                                    'attachment': None,
+                                    'attribute': 1
+                                }
+                            ],
+                            'buyer': 1,
+                            'quantity': 2,
+                            'price': '5000.00',
+                            'updated_at': '2020-06-10T06:19:51.555371Z',
+                            'product': 1
+                        }
+                    }
+                ],
+                'coupons': {},
+                'payment': {
+                    'id': 1,
+                    'ref_no': '133939',
+                    'amount': 5000.0,
+                    'status': 'not paid',
+                    'created_at': '2020-06-10T06:19:51.815364Z',
+                    'user': 2
+                },
+                'order_status': 'PRC',
+                'refund_status': 'REQ',
+                'shipping_detail': {
+                    'id': 1,
+                    'address': {
+                        'id': 1,
+                        'address': 'no 34 beckham street, ikeja Lagos',
+                        'city': 'Ikeja',
+                        'country': 'Nigeria',
+                        'zip_code': '35467',
+                        'state': 'Lagos',
+                        'added_at': '2020-06-10'
+                    },
+                    'buyer': 1,
+                    'first_name': 'John',
+                    'middle_name': '',
+                    'last_name': 'Doe',
+                    'phone_number': '+2347037606118',
+                    'default': True,
+                    'added_at': '2020-06-10'
+                },
+                'ordered_at': '2020-06-10T06:19:51.841853Z',
+                'updated_at': '2020-06-10T06:19:51.841853Z',
+                'payment_method': 'NOPAY',
+                'delivery_method': 'D2D',
+                'pickup_site': None
+            }
+        ]
+
         self.client.post('/order/')
+
         response = self.client.get('/order/')
 
         self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data[0]['items']
+                         [0]['name'], data[0]['items'][0]['name'])

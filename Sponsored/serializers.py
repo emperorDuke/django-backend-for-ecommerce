@@ -2,11 +2,13 @@ from django.utils import timezone
 
 from rest_framework import serializers
 
-from .models import SponsoredProduct, SponsoredStore, AdsPlan
+from .models import SponsoredProduct, SponsoredStore, AdsPlan, Ads
 
 from Products.models.product import Product
-from Payments.serializer import PaymentSerializer
 from Products.serializers.productSerializer import ProductSerializer
+
+from Payments.serializer import PaymentSerializer
+from Payments.models import Payment
 
 from Stores.serializers.storeSerializer import StoreSerializer
 from Stores.models.store import Store
@@ -31,6 +33,7 @@ class SponsoredItemSerializer(serializers.ModelSerializer):
 
         if bool(start_sub):
             setattr(instance, 'start_at', timezone.now())
+            setattr(instance, 'status', Ads.S)
             instance.save()
 
         return instance
@@ -55,9 +58,9 @@ class SponsoredProductSerializer(SponsoredItemSerializer):
             'product',
             'payment',
             'plan',
-            'has_expired'
+            'has_expired',
             'start_at',
-            'ref_no'
+            'ref_no',
             'status',
             'item_id',
             'ads_plan',
@@ -94,9 +97,9 @@ class SponsoredStoreSerializer(SponsoredItemSerializer):
             'store',
             'payment',
             'plan',
-            'has_expired'
+            'has_expired',
             'start_at',
-            'ref_no'
+            'ref_no',
             'status',
             'item_id',
             'ads_plan',
@@ -111,7 +114,7 @@ class SponsoredStoreSerializer(SponsoredItemSerializer):
             store_obj = Store.objects.get(pk=store_id)
             ads_plan = AdsPlan.objects.get(pk=plan_id)
 
-            payment = Payment.objects.create(
+            payment = Payment.objects.create( 
                 amount=ads_plan.amount,
                 user=self.context['request'].user
             )
@@ -122,3 +125,9 @@ class SponsoredStoreSerializer(SponsoredItemSerializer):
                 plan=ads_plan,
                 payment=payment
             )
+
+    def to_representation(self, instance):
+        product_qs = instance.store.products.all()[:10]
+        ret = super().to_representation(instance)
+        ret.setdefault('products', ProductSerializer(product_qs, many=True).data)
+        return ret

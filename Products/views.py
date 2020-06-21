@@ -1,8 +1,3 @@
-from drf_nested_forms.parsers import NestedMultiPartParser
-
-from Category.utils import Item
-from Category.filters import CategoryFilter
-
 from django.shortcuts import get_object_or_404
 from django.db.models import F, Prefetch
 
@@ -12,6 +7,11 @@ from rest_framework.parsers import FormParser, MultiPartParser
 from rest_framework.decorators import action
 
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
+
+from drf_nested_forms.parsers import NestedMultiPartParser
+
+from Category.utils import Item
+from Category.filters import CategoryFilter
 
 from Users.permissions import IsSeller
 
@@ -24,6 +24,8 @@ from .filters import ProductFilter, AttributeFilter
 from .serializers.productSerializer import ProductSerializer
 from .serializers.itemAttributeSerializer import AttributeSerializer
 from .serializers.metaSerializer import MetaSerializer, get_instance
+
+from .utils import L
 
 
 class ProductViewset(viewsets.ModelViewSet):
@@ -62,15 +64,14 @@ class ProductViewset(viewsets.ModelViewSet):
         elif self.action == 'create':
             permission_classes = [permissions.IsAuthenticated, IsSeller]
         else:
-            permission_classes = [
-                permissions.IsAuthenticated, IsSeller, IsSellerProduct]
+            permission_classes = [permissions.IsAuthenticated, IsSeller, IsSellerProduct]
 
         return [permission() for permission in permission_classes]
 
     @action(detail=False, permission_classes=[permissions.AllowAny])
     def recently_viewed(self, request):
         product_queryset = self.get_queryset().annotate(
-            recently_viewed=F('viewed__viewed_at')).order_by('recently_viewed')[:20]
+            recently_viewed=F('viewed__viewed_at')).order_by('-recently_viewed')[:20]
         serializer = self.get_serializer(product_queryset, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
@@ -81,9 +82,14 @@ class ProductViewset(viewsets.ModelViewSet):
         recent_activity.n_views = F('n_views') + 1
         recent_activity.save()
         return Response(status=status.HTTP_200_OK)
+    
+    @action(methods=['get'], detail=False, permission_classes=[permissions.AllowAny])
+    def listings(self, request):
+        listings = L(self.get_queryset(), self.get_serializer).listings
+        return Response(data=listings, status=status.HTTP_200_OK)
+
 
 #####################################################################
-##                                                                 ##
 ##                                                                 ##
 ##                                                                 ##
 #####################################################################
@@ -100,8 +106,7 @@ class AttributeView(viewsets.GenericViewSet):
         if self.action == 'retrieve':
             permission_classes = [permissions.AllowAny]
         else:
-            permission_classes = [
-                permissions.IsAuthenticated, IsSeller, IsSellerProduct]
+            permission_classes = [permissions.IsAuthenticated, IsSeller, IsSellerProduct]
 
         return [permission() for permission in permission_classes]
 
@@ -124,6 +129,11 @@ class AttributeView(viewsets.GenericViewSet):
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
 
+#######################################################################
+##                                                                   ##
+##                                                                   ##
+#######################################################################
+
 class ProductMetaView(viewsets.ViewSet):
     parser_classes = (NestedMultiPartParser, FormParser)
     authentication_classes = (JSONWebTokenAuthentication,)
@@ -132,8 +142,7 @@ class ProductMetaView(viewsets.ViewSet):
         if self.action == 'retrieve':
             permission_classes = [permissions.AllowAny]
         else:
-            permission_classes = [
-                permissions.IsAuthenticated, IsSeller]
+            permission_classes = [permissions.IsAuthenticated, IsSeller]
 
         return [permission() for permission in permission_classes]
 
@@ -154,3 +163,6 @@ class ProductMetaView(viewsets.ViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(data=serializer.data, status=status.HTTP_200_OK)
+
+
+
