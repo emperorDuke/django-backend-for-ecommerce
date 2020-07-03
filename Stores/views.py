@@ -30,7 +30,7 @@ class StoreView(viewsets.ModelViewSet):
 
         return [permission() for permission in permission_classes]
 
-    @action(methods=['get'], detail=False)
+    @action(detail=False)
     def locations(self, request):
         states = self.get_queryset().annotate(
             state=F('address__state')).values_list('state')

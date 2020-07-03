@@ -12,4 +12,4 @@ class ProductRating (Rating):
    
     
     def __str__ (self):
-        return self.rating_average
+        return self.product.name

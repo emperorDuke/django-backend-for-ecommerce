@@ -9,4 +9,4 @@ class Viewed (models.Model):
     viewed_at = models.DateTimeField(auto_now=True)
 
     def __str__ (self):
-        return self.n_views
+        return self.product.name

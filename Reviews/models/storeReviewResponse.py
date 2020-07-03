@@ -12,3 +12,6 @@ class StoreResponse (models.Model):
 
     class Meta:
         db_table = 'store_review_response'
+    
+    def __str__(self):
+        return self.response

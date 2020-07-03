@@ -9,4 +9,7 @@ class ProductReview (Reviews):
     class Meta(Reviews.Meta):
         db_table = 'product_review'
 
+    def __str__(self):
+        return self.review
+
 

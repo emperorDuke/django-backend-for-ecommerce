@@ -8,6 +8,6 @@ class StoreRating(Rating):
     class Meta(Rating.Meta):
         db_table = 'store_ratings'
 
-    def __str__(self):
-        return self.rating_average
+    def __str__ (self):
+        return self.product.name
     

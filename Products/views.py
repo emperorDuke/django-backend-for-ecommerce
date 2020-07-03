@@ -59,7 +59,16 @@ class ProductViewset(viewsets.ModelViewSet):
         return queryset
 
     def get_permissions(self):
-        if self.action == 'list' or self.action == 'retrieve':
+
+        condition = (
+            self.action == 'list',
+            self.action == 'retrieve',
+            self.action == 'listings',
+            self.action == 'recently_viewed',
+            self.action == 'is_viewed'
+        )
+
+        if any(condition):
             permission_classes = [permissions.AllowAny]
         elif self.action == 'create':
             permission_classes = [permissions.IsAuthenticated, IsSeller]
@@ -68,25 +77,25 @@ class ProductViewset(viewsets.ModelViewSet):
 
         return [permission() for permission in permission_classes]
 
-    @action(detail=False, permission_classes=[permissions.AllowAny])
+    @action(detail=False)
     def recently_viewed(self, request):
         product_queryset = self.get_queryset().annotate(
             recently_viewed=F('viewed__viewed_at')).order_by('-recently_viewed')[:20]
         serializer = self.get_serializer(product_queryset, many=True)
         return Response(data=serializer.data, status=status.HTTP_200_OK)
 
-    @action(detail=True, methods=['post'], permission_classes=[permissions.AllowAny])
+    @action(detail=True, methods=['post'])
     def is_viewed(self, request, pk=None):
         product_obj = self.get_object()
         recent_activity = product_obj.viewed
         recent_activity.n_views = F('n_views') + 1
         recent_activity.save()
         return Response(status=status.HTTP_200_OK)
-    
-    @action(methods=['get'], detail=False, permission_classes=[permissions.AllowAny])
+
+    @action(detail=False)
     def listings(self, request):
-        listings = L(self.get_queryset(), self.get_serializer).listings
-        return Response(data=listings, status=status.HTTP_200_OK)
+        l = L(self.get_queryset(), self.get_serializer)
+        return Response(data=l.listings, status=status.HTTP_200_OK)
 
 
 #####################################################################
@@ -163,6 +172,3 @@ class ProductMetaView(viewsets.ViewSet):
         serializer.is_valid(raise_exception=True)
         serializer.save()
         return Response(data=serializer.data, status=status.HTTP_200_OK)
-
-
-

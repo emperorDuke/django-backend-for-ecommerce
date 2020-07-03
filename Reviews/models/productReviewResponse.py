@@ -10,6 +10,9 @@ class ProductReviewResponse (models.Model):
 
     class Meta:
         db_table = 'product_review_responses'
+    
+    def __str__(self):
+        return self.response
 
 
 

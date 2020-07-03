@@ -90,6 +90,7 @@ class SponsoredProductSerializer(SponsoredItemSerializer):
 
 class SponsoredStoreSerializer(SponsoredItemSerializer):
     store = StoreSerializer(read_only=True)
+    products = serializers.SerializerMethodField()
 
     class Meta:
         model = SponsoredStore
@@ -103,8 +104,13 @@ class SponsoredStoreSerializer(SponsoredItemSerializer):
             'status',
             'item_id',
             'ads_plan',
-            'start_sub'
+            'start_sub',
+            'products'
         )
+    
+    def get_products(self, instance):
+        product_qs = instance.store.products.all()[:10]
+        return ProductSerializer(product_qs, many=True).data
 
     def create(self, validated_data):
         store_id = validated_data.get('item_id', None)
@@ -126,8 +132,3 @@ class SponsoredStoreSerializer(SponsoredItemSerializer):
                 payment=payment
             )
 
-    def to_representation(self, instance):
-        product_qs = instance.store.products.all()[:10]
-        ret = super().to_representation(instance)
-        ret.setdefault('products', ProductSerializer(product_qs, many=True).data)
-        return ret
