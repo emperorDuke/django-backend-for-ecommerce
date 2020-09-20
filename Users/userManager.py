@@ -3,8 +3,6 @@ from django.contrib.auth.models import Group
 
 from .permissions import create_user_permissions
 
-from BuyerProfile.models.profile import BuyerProfile
-
 
 class MyUserManager(BaseUserManager):
 
@@ -49,8 +47,6 @@ class MyUserManager(BaseUserManager):
         if user_type.upper() == 'BUYER':
             buyers = Group.objects.get(name='buyers')
             user.groups.add(buyers)
-
-            BuyerProfile.objects.create(user=user)
 
         return user
 

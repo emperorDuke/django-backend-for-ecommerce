@@ -17,4 +17,4 @@ class Specification (models.Model):
         unique_together = ('product', 'type', 'value')
 
     def __str__(self):
-        return '%s: %s' % (self.type, self.value)
+        return '%s_%s: %s' % (self.product.name, self.type, self.value)

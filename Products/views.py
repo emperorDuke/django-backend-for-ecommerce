@@ -94,7 +94,7 @@ class ProductViewset(viewsets.ModelViewSet):
 
     @action(detail=False)
     def listings(self, request):
-        l = L(self.get_queryset(), self.get_serializer)
+        l = L(self.get_queryset(), self.get_serializer, request)
         return Response(data=l.listings, status=status.HTTP_200_OK)
 
 

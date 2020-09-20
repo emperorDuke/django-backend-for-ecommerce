@@ -31,7 +31,6 @@ class OrderItemSerializer(serializers.ModelSerializer):
 
 
 class OrderSerializer(serializers.ModelSerializer):
-
     items = OrderItemSerializer(read_only=True, many=True)
     coupons = CouponSerializer(read_only=True)
     payment = PaymentSerializer(read_only=True)
@@ -68,7 +67,7 @@ class OrderSerializer(serializers.ModelSerializer):
     def get_shipping_detail_obj(buyer):
         return ShippingDetail.objects.filter(
             buyer=buyer, default=True).first()
-    
+
     def get_buyer_obj(self):
         user = self.context['request'].user
         return BuyerProfile.objects.get(user=user)

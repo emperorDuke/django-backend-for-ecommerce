@@ -16,7 +16,7 @@ class Attribute(models.Model):
         unique_together=('product', 'name')
     
     def __str__(self):
-        return self.name
+        return '%s_%s' % (self.product.name, self.name)
 
 
 
@@ -30,6 +30,6 @@ class Variation(models.Model):
         unique_together=('attribute', 'vendor_metric')
 
     def __str__(self):
-        return self.vendor_metric
+        return '%s_%s' % (self.attribute.product.name, self.vendor_metric)
 
     

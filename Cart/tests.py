@@ -115,13 +115,13 @@ class CartTestCase(APITestCase):
 
         cls.buyer = get_user_model().objects.create_user(**cls.buyer_data)
 
-        cls.buyer_profile = BuyerProfile.objects.get(user=cls.buyer)
+        cls.buyer_profile = BuyerProfile.objects.create(user=cls.buyer)
 
         address = {
             'address': 'no 34 beckham street, ikeja Lagos',
             'country': 'Nigeria',
             'city': 'Ikeja',
-            'state':'Lagos',
+            'state': 'Lagos',
             'zip_code': '35467',
         }
 
@@ -141,27 +141,26 @@ class CartTestCase(APITestCase):
 
         cls.cart = {
             'product': cls.product.pk,
-            'quantity': 2,
+            'quantity': "2",
             'price': '5000',
-            'variants[0][id]': 1,
-            'variants[0][attribute]': 1,
+            'variants[0][id]': "1",
+            'variants[0][attribute]': "1",
             'variants[0][vendor_metric]': 'L',
-            'variants[0][metric_verbose_name]': 'Large'
+            'variants[0][metric_verbose_name]': 'Large',
         }
 
         cls.token = 'JWT ' + cls.buyer.token
 
     def setUp(self):
 
-        self.client.credentials(HTTP_AUTHORIZATION = self.token.encode())
+        self.client.credentials(HTTP_AUTHORIZATION=self.token.encode())
 
     def test_create(self):
 
-        response = self.client.post('/cart/', self.cart, format='json')
+        response = self.client.post('/cart/', self.cart)
 
         self.assertEqual(response.status_code, 201)
         self.assertEqual(Cart.objects.count(), 1)
-        # self.assertEqual(response.data['product']['name'], 'samsung galaxy s3')
 
     def test_update(self):
 
@@ -194,7 +193,7 @@ class CartTestCase(APITestCase):
         self.client.post('/cart/', self.cart, format='json')
 
         response = self.client.get('/cart/', format='json')
-  
+
         self.assertEqual(response.status_code, 200)
         self.assertEqual(response.data[0]['variants'][0]['vendor_metric'], 'L')
 

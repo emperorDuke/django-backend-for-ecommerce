@@ -7,8 +7,8 @@ def generator(instance, filter='ref_no'):
     db table
     """
     code = str(uuid.uuid1().int)[:6]
-    filter = {filter: code}
+    filter = { filter: code }
     if instance.__class__.objects.filter(**filter).exists():
-        return _generate_code(instance)
+        return generate_code(instance)
 
     return code

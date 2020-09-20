@@ -1,7 +1,7 @@
 from rest_framework import viewsets, permissions, status
 from rest_framework.response import Response
 
-from drf_nested_forms.parsers import NestedJSONParser
+from drf_nested_forms.parsers import NestedMultiPartParser, NestedJSONParser
 
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
@@ -11,15 +11,25 @@ from .models import Cart
 from Users.permissions import IsBuyer
 
 
+# Create your views here.
 
 class CartView(viewsets.ModelViewSet):
-    
+
     queryset = Cart.objects.all()
     authentication_classes = (JSONWebTokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated, IsBuyer)
     serializer_class = CartSerializer
-    parser_classes = (NestedJSONParser,)
+    parser_classes = (NestedMultiPartParser, NestedJSONParser)
 
+    def filter_queryset(self, queryset):
+        buyer = self.request.user.buyerprofile
+        return queryset.filter(buyer=buyer)
+
+    def create(self, request):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        serializer.save()
+        return Response(data=serializer.data, status=status.HTTP_201_CREATED)
 
     def destroy(self, request, pk=None):
         cart_obj = self.get_object()
@@ -31,13 +41,3 @@ class CartView(viewsets.ModelViewSet):
             order_item_obj.delete()
 
         return Response(status=status.HTTP_204_NO_CONTENT)
-
-
-
-
-
-
-
-
-
-# Create your views here.

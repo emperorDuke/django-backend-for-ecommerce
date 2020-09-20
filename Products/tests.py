@@ -31,7 +31,7 @@ class ProductTestCase(APITestCase):
         child_2 = Category.objects.create(name='note_book', parent=tree_2)
         grand_child_2 = Category.objects.create(name='laptop', parent=child_2)
 
-        cls.category_name = grand_child_1.name
+        cls.category_ref_no = grand_child_1.ref_no
 
         cls.user_data = {
             'first_name': 'Duke',
@@ -115,7 +115,7 @@ class ProductTestCase(APITestCase):
 
         self.client.post('/products/', self.product_data)
 
-        url = '/products/?category=%s' % (self.category_name)
+        url = '/products/?category=%s' % (self.category_ref_no)
 
         response = self.client.get(url)
 

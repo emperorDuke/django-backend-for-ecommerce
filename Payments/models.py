@@ -8,12 +8,12 @@ from utils.code_generator import generator
 
 
 class Payment(models.Model):
-    PAID = 'paid'
-    NOT_PAID = 'not paid'
+    PAID = 'PAID'
+    NOT_PAID = 'NOT_PAID'
 
     PAYMENT_STATUS = (
         (PAID, 'PAID'),
-        (NOT_PAID, 'NOT_PAID')
+        (NOT_PAID, 'NOT PAID')
     )
     user = models.ForeignKey(settings.AUTH_USER_MODEL, related_name='orders',
                              verbose_name='user', on_delete=models.CASCADE)

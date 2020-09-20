@@ -12,9 +12,10 @@ class L(object):
     _lookups = {'latest deals': '-added_at'}
     _level = 1
 
-    def __init__(self, product_qs, serializer):
+    def __init__(self, product_qs, serializer, request):
         self._product_qs = product_qs
         self._serializer = serializer
+        self._request = request
 
     def _get_random_categories(self, lookup):
         self._random_categories = choices(lookup, k=2)

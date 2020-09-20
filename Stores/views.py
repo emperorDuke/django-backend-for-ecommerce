@@ -23,7 +23,14 @@ class StoreView(viewsets.ModelViewSet):
     serializer_class = StoreSerializer
 
     def get_permissions(self):
-        if self.action == 'list' or self.action == 'retrieve' or self.action == 'locations':
+
+        condition = (
+            self.action == 'list',
+            self.action == 'retrieve',
+            self.action == 'locations'
+        )
+
+        if any(condition):
             permission_classes = [permissions.AllowAny]
         else:
             permission_classes = [permissions.IsAuthenticated, IsSeller]
@@ -32,9 +39,9 @@ class StoreView(viewsets.ModelViewSet):
 
     @action(detail=False)
     def locations(self, request):
-        states = self.get_queryset().annotate(
-            state=F('address__state')).values_list('state')
-        return Response(data=list(set(states)), status=status.HTTP_200_OK)
+        states = set(self.get_queryset().annotate(
+            state=F('address__state')).values_list('state'))
+        return Response(data=list(states), status=status.HTTP_200_OK)
 
 
 

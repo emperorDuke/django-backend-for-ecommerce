@@ -40,20 +40,20 @@ def build_categories(iteratable, level=5):
                                 for k_2, v_2 in k.items():
                                     if k_2 == 'parent_id' and v_2 == j["id"]:
                                         build_2.append({
-                                            "name": strip(k["name"]),
-                                            "id": k["id"],
+                                            "name": k["name"],
+                                            "id": k["ref_no"],
                                             "children": None
                                         })
                             if build_2:
                                 build_1.append({
-                                    "name": strip(j["name"]),
-                                    "id": j["id"],
+                                    "name": j["name"],
+                                    "id": j["ref_no"],
                                     "children": build_2
                                 })
                 if build_1:
                     build_0.append({
-                        "name": strip(i["name"]),
-                        "id": i["id"],
+                        "name": i["name"],
+                        "id": i["ref_no"],
                         "children": build_1
                     })
 

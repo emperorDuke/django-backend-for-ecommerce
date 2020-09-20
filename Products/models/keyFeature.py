@@ -16,4 +16,4 @@ class KeyFeature(models.Model):
         unique_together = ('product', 'feature')
 
     def __str__(self):
-        return self.feature
+        return '%s: %s' % (self.product.name, self.feature)

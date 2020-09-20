@@ -24,9 +24,8 @@ class FilterView(APIView):
 
     renderer_classes = (JSONRenderer,)
 
-    def get(self, request, name=None):
-        category = Category.objects.get(name=name)
-        product_qs = Product.objects.select_related(
-            'attributes__variants').filter(category=category)
+    def get(self, request, pk=None):
+        category = Category.objects.get(ref_no=pk)
+        product_qs = Product.objects.filter(category=category)
         item = Item(product_qs)
         return Response(data=item.filters, status=status.HTTP_200_OK)

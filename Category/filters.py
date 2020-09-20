@@ -10,7 +10,7 @@ class CategoryFilter(filters.BaseFilterBackend):
     def filter_queryset(self, request, queryset, view):
         
         query_param = request.query_params.get('category', None)
-        instance = Category.objects.get(name=query_param)
+        instance = Category.objects.get(ref_no=query_param)
         queries = []
 
         if instance.is_root_node():

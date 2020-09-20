@@ -44,7 +44,15 @@ class UserSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = get_user_model()
-        fields = '__all__'
+        fields = (
+            "id",
+            "first_name", 
+            "middle_name", 
+            "last_name", 
+            "phone_number",
+            "email",
+            "user_type"
+            )
         extra_kwargs = {'password': {'write_only': True}}
         read_only_fields = ('user_type',)
         validators = [

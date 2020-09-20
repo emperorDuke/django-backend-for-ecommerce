@@ -12,10 +12,10 @@ from Location.models import Location
 
 class Order(models.Model):
 
-    EN = 'EN'
-    PRC = 'PRC'
-    DELVD = 'DELVD'
-    CAN = 'CAN'
+    EN = 'ENROUTE'
+    PRC = 'PROCESSING'
+    DELVD = 'DELIVERED'
+    CAN = 'CANCELLED'
 
     ORDER_STATUS = (
         (EN, 'Enroute'),
@@ -24,9 +24,9 @@ class Order(models.Model):
         (CAN, 'Cancelled')
     )
 
-    REQ = 'REQ'
-    GR = 'GR'
-    NR = "NR"
+    REQ = 'REQUESTED'
+    GR = 'GRANTED'
+    NR = "NO_REQUEST"
 
     REFUNDSTATUS = (
         (REQ ,'Requested'),
@@ -34,8 +34,8 @@ class Order(models.Model):
         (NR,'No Request'),
     )
 
-    PUS = 'PUS'
-    D2D = 'D2D'
+    PUS = 'PICKUP_SITE'
+    D2D = 'DOOR_2_DOOR'
 
     DELIVERY_METHOD = (
         (PUS, 'Pick-up sites'),
