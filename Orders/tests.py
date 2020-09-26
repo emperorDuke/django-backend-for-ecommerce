@@ -215,7 +215,7 @@ class OrderTestCase(APITestCase):
             '[shipping_detail][address][country]': 'Nigeria',
             '[shipping_detail][address][state]': 'Calabar'
         }
-        
+
         response = self.client.patch('/order/1/', order)
 
         self.assertEqual(response.status_code, 200)

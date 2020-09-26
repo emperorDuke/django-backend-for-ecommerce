@@ -7,6 +7,7 @@ from Users.permissions import create_user_permissions
 
 from Users.models.address import Address
 from .models.shipping_detail import ShippingDetail
+from .models.profile import BuyerProfile
 
 # Create your tests here.
 ##################################################################
@@ -15,6 +16,7 @@ from .models.shipping_detail import ShippingDetail
 ##                       ######                                 ##
 ##                                                              ##
 ##################################################################
+
 
 class ShippingDetailTestCase(APITestCase):
 
@@ -32,89 +34,100 @@ class ShippingDetailTestCase(APITestCase):
         }
 
         cls.user = get_user_model().objects.create_user(**cls.user_data)
+        cls.buyer = BuyerProfile.objects.create(user=cls.user)
 
         token = 'JWT ' + cls.user.token
 
         cls.b_token = token.encode()
 
         cls.main_address = {
-            'user': cls.user,
-            'street_address': 'no 34 beckham street, ikeja Lagos',
-            'country': 'Nigeria',
-            'city': 'Lagos',
-            'zip_code': '35467',
+            'first_name': 'Duke',
+            'last_name': 'Effiom',
+            'phone_number': '+2347037606116',
+            '[address][address]': 'no 34 beckham street, ikeja Lagos',
+            '[address][country]': 'Nigeria',
+            '[address][city]': 'Lagos',
+            '[address][state]': 'Lagos',
+            '[address][zip_code]': '35467',
         }
 
-        Address.objects.create(**cls.main_address)
+        cls.main_address_2 = {
+            'address': 'no 2 olugbede street idumu, lagos',
+            'country': 'Nigeria',
+            'city': 'Ikeja',
+            'state': 'Lagos',
+            'zip_code': '35464',
+        }
+
+        address_obj = Address.objects.create(**cls.main_address_2)
+
+        ShippingDetail.objects.create(
+            buyer=cls.buyer,
+            address=address_obj,
+            first_name="duke",
+            last_name='Effiom',
+            phone_number='+2347037606116'
+            )
 
     def setUp(self):
 
         self.client.credentials(HTTP_AUTHORIZATION=self.b_token)
 
-    def test_update(self):
-
-        address = {
-            'street_address': 'no 34 beckham street, ikeja Abuja',
-            'city': 'Abuja',
-        }
-
-        response = self.client.patch('/address/1/', address, format='json')
-        
-
-        self.assertEqual(response.status_code, 200)
-
-    def test_list(self):
-
-        main_address = {
-            'user': self.user,
-            'street_address': 'no 2 olugbede street idumu, lagos',
-            'country': 'Nigeria',
-            'city': 'Lagos',
-            'zip_code': '35464',
-        }
-
-        Address.objects.create(**main_address)
-
-        response = self.client.get('/address/')
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            response.data[1]['street_address'], main_address['street_address'])
-
     def test_create(self):
 
-        main_address = {
-            'street_address': 'no 2 olugbede street idumu, lagos',
-            'country': 'Nigeria',
-            'city': 'Lagos',
-            'zip_code': '35464',
-        }
-
-        response = self.client.post('/address/', main_address)
+        response = self.client.post('/shipping/', self.main_address)
 
         self.assertEqual(response.status_code, 201)
         self.assertEqual(
-            response.data['street_address'], main_address['street_address'])
+            response.data['address']['address'], 
+            self.main_address['[address][address]']
+            )
+
+    def test_update(self):
+
+        address = {
+            'first_name': 'Duke',
+            'last_name': 'Effiom',
+            'phone_number': '+2347037606116',
+            '[address][address]': 'no 34 beckham street, ikeja Abuja',
+            '[address][city]': 'Abuja',
+            '[address][state]': 'Lagos',
+            '[address][zip_code]': '35467',
+        }
+
+        response = self.client.patch('/shipping/1/', address, format='json')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.data['address']['address'],
+            address['[address][address]']
+        )
+
+    def test_list(self):
+
+        response = self.client.get('/shipping/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.data[0]['address']['address'], 
+            self.main_address_2['address']
+            )
+
+    def test_retrieve(self):
+        response = self.client.get('/shipping/1/')
+
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(
+            response.data['address']['address'],
+            self.main_address_2['address']
+        )
 
     def test_delete(self):
 
-        response = self.client.delete('/address/1/')
+        response = self.client.delete('/shipping/1/')
 
         self.assertEqual(response.status_code, 204)
-        with self.assertRaises(Address.DoesNotExist):
-            Address.objects.get(pk=1)
+        with self.assertRaises(ShippingDetail.DoesNotExist):
+            ShippingDetail.objects.get(pk=1)
 
-    def test_retrieve(self):
-        response = self.client.get('/address/1/')
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            response.data['street_address'], self.main_address['street_address'])
-
-    def test_user_addresses(self):
-
-        response = self.client.get('/buyer/users/addresses/')
-
-        self.assertEqual(response.status_code, 200)
-        self.assertEqual(
-            response.data[0]['street_address'], self.main_address['street_address'])
+    

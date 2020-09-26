@@ -5,18 +5,18 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import exceptions
 
 
-def authenticate(**credentials):
+# def authenticate(**credentials):
 
-    email = credentials.get(get_user_model().USERNAME_FIELD)
-    password = credentials.get('password')
+#     email = credentials.get(get_user_model().USERNAME_FIELD)
+#     password = credentials.get('password')
 
-    users = get_user_model().objects.all()
+#     users = get_user_model().objects.all()
 
-    for user in users:
-        if user.email == email and user.check_password(password):
-            return user
+#     for user in users:
+#         if user.email == email and user.check_password(password):
+#             return user
 
-    return None
+#     return None
 
 
 def login(request, serializer=None):
@@ -25,8 +25,8 @@ def login(request, serializer=None):
     authentication attribute to True
     """
 
-    email = request.data.get('email')
-    password = request.data.get('password')
+    email = request.data.get('email', None)
+    password = request.data.get('password', None)
 
     if email is None:
         raise AttributeError(
@@ -47,10 +47,11 @@ def login(request, serializer=None):
     if user is None:
         raise exceptions.AuthenticationFailed(_('user does not exist'))
 
-    if user.is_active is False:
+    if not user.is_active:
         raise exceptions.AuthenticationFailed(_('user is not active'))
 
     return {
         'token': user.token,
+        'token_type': 'JWT',
         'user': serializer(user, context={'request': request}).data
     }
