@@ -11,8 +11,8 @@ from Stores.models import Store
 from Products.models.itemAttribute import Variation, Attribute
 from Products.models.product import Product
 
-from BuyerProfile.models.profile import BuyerProfile
-from BuyerProfile.models.shipping_detail import ShippingDetail
+from Buyer.models.profile import Profile
+from Buyer.models.shipping_detail import Shipping
 
 from Location.models import Location
 
@@ -119,7 +119,7 @@ class OrderTestCase(APITestCase):
 
         cls.buyer = get_user_model().objects.create_user(**cls.buyer_data)
 
-        cls.buyer_profile = BuyerProfile.objects.get(user=cls.buyer)
+        cls.buyer_profile = Profile.objects.get(user=cls.buyer)
 
         cart_items = [
             {
@@ -158,7 +158,7 @@ class OrderTestCase(APITestCase):
             'default': True
         }
 
-        ShippingDetail.objects.create(**cls.shipping_detail)
+        Shipping.objects.create(**cls.shipping_detail)
 
         cls.token = 'JWT ' + cls.buyer.token
 
@@ -175,7 +175,7 @@ class OrderTestCase(APITestCase):
         self.assertEqual(orders.Order.objects.count(), 1)
         self.assertEqual(ordered_item.OrderedItem.objects.get(
             pk=1).name, 'samsung galaxy s3')
-        self.assertEqual(ShippingDetail.objects.get(pk=1).default, True)
+        self.assertEqual(Shipping.objects.get(pk=1).default, True)
 
     def test_update(self):
         """

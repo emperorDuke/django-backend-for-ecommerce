@@ -49,7 +49,7 @@ INSTALLED_APPS = [
     'Reviews',
     'Stores',
     'Ratings',
-    'BuyerProfile',
+    'Buyer',
     'Category',
     'Cart',
     'Orders',

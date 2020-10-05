@@ -15,6 +15,7 @@ class Specification (models.Model):
         verbose_name = 'specification'
         verbose_name_plural = 'specifications'
         unique_together = ('product', 'type', 'value')
+        db_table = 'product_specification'
 
     def __str__(self):
         return '%s_%s: %s' % (self.product.name, self.type, self.value)

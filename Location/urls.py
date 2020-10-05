@@ -1,8 +1,7 @@
-from django.urls import re_path
-
+from rest_framework import routers
 from .views import LocationView
 
+router = routers.DefaultRouter()
+router.register(r'locations', LocationView)
 
-urlpatterns = [
-    re_path(r'^location/$', LocationView.as_view(), name='get-location')
-]
+urlpatterns = router.urls

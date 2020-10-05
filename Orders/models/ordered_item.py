@@ -16,6 +16,12 @@ class OrderedItem(models.Model):
     variants = models.ManyToManyField(i.Variation, verbose_name='variant of product')
     cart_content = models.OneToOneField(Cart, verbose_name='cart_content', null=True, on_delete=models.SET_NULL)
 
+
+    class Meta:
+        db_table = 'order_item'
+        verbose_name_plural = 'order_items'
+        verbose_name = 'order_item'
+        
     def __str__(self):
         return self.product.name
         

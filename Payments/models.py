@@ -2,8 +2,6 @@ from django.db import models
 from django.conf import settings
 from django.utils.translation import gettext_lazy as _
 
-from BuyerProfile.models.profile import BuyerProfile
-
 from utils.code_generator import generator
 
 
@@ -24,6 +22,10 @@ class Payment(models.Model):
                               choices=PAYMENT_STATUS, blank=False, default=NOT_PAID)
     created_at = models.DateTimeField(auto_now_add=True)
 
+    class Meta:
+        db_table = 'Payment'
+        verbose_name_plural = 'payments'
+
     def __str__(self):
         return self.buyer.user.name
 
@@ -36,6 +38,10 @@ class Coupon(models.Model):
     code = models.CharField(max_length=15, unique=True)
     amount = models.FloatField()
     created_at = models.DateTimeField(auto_now_add=True)
+
+    class Meta:
+        db_table = 'coupon'
+        verbose_name_plural = 'coupons'
 
     def __str__(self):
         return self.code

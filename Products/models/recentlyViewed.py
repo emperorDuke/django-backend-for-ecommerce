@@ -8,5 +8,8 @@ class Viewed (models.Model):
     n_views = models.IntegerField(_('number of views'), blank=True, default=0)
     viewed_at = models.DateTimeField(auto_now=True)
 
+    class Meta:
+        db_table = 'viewed'
+
     def __str__ (self):
         return self.product.name

@@ -5,9 +5,6 @@ from rest_framework.test import APITestCase
 
 from .permissions import create_user_permissions
 
-from .models.address import Address
-from BuyerProfile.models.shipping_detail import ShippingDetail
-
 
 class UserTestCase(APITestCase):
 
@@ -63,8 +60,6 @@ class UserTestCase(APITestCase):
 
         self.assertEqual(response.status_code, status.HTTP_201_CREATED)
         self.assertEqual(get_user_model().objects.count(), 1)
-        # self.assertEqual(Address.objects.count(), 1)
-        # self.assertEqual(ShippingDetail.objects.count(), 1)
 
     def test_user(self):
 
