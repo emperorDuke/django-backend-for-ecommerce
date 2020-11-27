@@ -1,6 +1,8 @@
 from django.db import models
 from django.utils.translation import gettext_lazy as _
 
+from phonenumber_field.modelfields import PhoneNumberField
+
 # Create your models here
 
 class Location(models.Model):
@@ -9,6 +11,7 @@ class Location(models.Model):
     country = models.CharField(_('country'), max_length=50, blank=False)
     zip_code = models.CharField(_('zip code'), max_length=50, blank=True)
     state = models.CharField(_('state'), max_length=50, blank=False)
+    phone_number = PhoneNumberField(_('Phone number'), blank=False)
     added_at = models.DateField(auto_now=True)
 
     class Meta:
