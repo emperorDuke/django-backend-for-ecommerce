@@ -115,7 +115,7 @@ class AttributeView(viewsets.GenericViewSet):
         if self.action == 'retrieve':
             permission_classes = [permissions.AllowAny]
         else:
-            permission_classes = [permissions.IsAuthenticated, IsSeller, IsSellerProduct]
+            permission_classes = [permissions.IsAuthenticated, IsSeller]
 
         return [permission() for permission in permission_classes]
 

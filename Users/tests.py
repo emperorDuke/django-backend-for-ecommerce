@@ -31,16 +31,6 @@ class UserTestCase(APITestCase):
             'phone_number': '+2347037606116',
         }
 
-        cls.address = {
-            '[address][address]': 'no 34 beckham street, ikeja Lagos',
-            '[address][country]': 'Nigeria',
-            '[address][city]': 'Ikeja',
-            '[address][state]': 'Lagos',
-            '[address][zip_code]': '35467',
-        }
-
-        cls.buyer_data
-
     def test_create_seller(self):
 
         url = '/seller/users/'

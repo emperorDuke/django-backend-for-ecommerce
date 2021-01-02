@@ -70,7 +70,7 @@ class ProductTestCase(APITestCase):
             'description_attachment_1': open('C:/Users/DUKE/Pictures/Saved Pictures/hp_42ee85b5f3ac14b5367b2a998a8bcabc.jpg', 'rb'),
             'description_attachment_2': open('C:/Users/DUKE/Pictures/Saved Pictures/hp_42ee85b5f3ac14b5367b2a998a8bcabc.jpg', 'rb'),
             "availability": 'IN STOCK',
-            'sku': 'FGR33556'
+            'sku_no': 'FGR33556'
         }
 
         cls.initial_data = {
@@ -88,7 +88,7 @@ class ProductTestCase(APITestCase):
             'description_attachment_1': ContentFile(open('C:/Users/DUKE/Pictures/Saved Pictures/hp_42ee85b5f3ac14b5367b2a998a8bcabc.jpg', 'rb').read()),
             'description_attachment_2': ContentFile(open('C:/Users/DUKE/Pictures/Saved Pictures/hp_42ee85b5f3ac14b5367b2a998a8bcabc.jpg', 'rb').read()),
             "availability": 'IN STOCK',
-            'sku': 'FGR33556'
+            'sku_no': 'FGR33556'
         }
 
         Product.objects.create(**cls.initial_data)
@@ -250,7 +250,7 @@ class AttributeTestCase(APITestCase):
             'description_attachment_1': ContentFile(open('C:/Users/DUKE/Pictures/Saved Pictures/hp_42ee85b5f3ac14b5367b2a998a8bcabc.jpg', 'rb').read()),
             'description_attachment_2': ContentFile(open('C:/Users/DUKE/Pictures/Saved Pictures/hp_42ee85b5f3ac14b5367b2a998a8bcabc.jpg', 'rb').read()),
             "availability": 'IN STOCK',
-            'sku': 'FGR33556'
+            'sku_no': 'FGR33556'
         }
 
         cls.product = Product.objects.create(**cls.product_data)
