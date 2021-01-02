@@ -6,8 +6,8 @@ from rest_framework.test import APITestCase
 from Users.permissions import create_user_permissions
 
 from Users.models.address import Address
-from .models.shipping_detail import ShippingDetail
-from .models.profile import BuyerProfile
+from .models.shipping import Shipping
+from .models.profile import Profile
 
 # Create your tests here.
 ##################################################################
@@ -34,7 +34,7 @@ class ShippingDetailTestCase(APITestCase):
         }
 
         cls.user = get_user_model().objects.create_user(**cls.user_data)
-        cls.buyer = BuyerProfile.objects.create(user=cls.user)
+        cls.buyer = Profile.objects.create(user=cls.user)
 
         token = 'JWT ' + cls.user.token
 
@@ -46,9 +46,9 @@ class ShippingDetailTestCase(APITestCase):
             'phone_number': '+2347037606116',
             '[address][address]': 'no 34 beckham street, ikeja Lagos',
             '[address][country]': 'Nigeria',
-            '[address][city]': 'Lagos',
-            '[address][state]': 'Lagos',
-            '[address][zip_code]': '35467',
+            '[address][city]': 'calabar',
+            '[address][state]': 'cross-river',
+            '[address][zip_code]': '35427',
         }
 
         cls.main_address_2 = {
@@ -61,30 +61,27 @@ class ShippingDetailTestCase(APITestCase):
 
         address_obj = Address.objects.create(**cls.main_address_2)
 
-        ShippingDetail.objects.create(
+        Shipping.objects.create(
             buyer=cls.buyer,
             address=address_obj,
             first_name="duke",
             last_name='Effiom',
             phone_number='+2347037606116'
-            )
+        )
 
     def setUp(self):
-
         self.client.credentials(HTTP_AUTHORIZATION=self.b_token)
 
     def test_create(self):
-
         response = self.client.post('/shipping/', self.main_address)
 
         self.assertEqual(response.status_code, 201)
         self.assertEqual(
-            response.data['address']['address'], 
+            response.data['address']['address'],
             self.main_address['[address][address]']
-            )
+        )
 
     def test_update(self):
-
         address = {
             'first_name': 'Duke',
             'last_name': 'Effiom',
@@ -104,14 +101,13 @@ class ShippingDetailTestCase(APITestCase):
         )
 
     def test_list(self):
-
         response = self.client.get('/shipping/')
 
         self.assertEqual(response.status_code, 200)
         self.assertEqual(
-            response.data[0]['address']['address'], 
+            response.data[0]['address']['address'],
             self.main_address_2['address']
-            )
+        )
 
     def test_retrieve(self):
         response = self.client.get('/shipping/1/')
@@ -123,11 +119,8 @@ class ShippingDetailTestCase(APITestCase):
         )
 
     def test_delete(self):
-
         response = self.client.delete('/shipping/1/')
 
         self.assertEqual(response.status_code, 204)
-        with self.assertRaises(ShippingDetail.DoesNotExist):
-            ShippingDetail.objects.get(pk=1)
-
-    
+        with self.assertRaises(Shipping.DoesNotExist):
+            Shipping.objects.get(pk=1)

@@ -24,18 +24,19 @@ from Products.models.product import Product
 
 # Create your views here.
 class StorePostReview(generics.CreateAPIView):
-    
+
     queryset = StoreReview.objects.all()
     serializer_class = StoreReviewSerializer
     authentication_classes = (JSONWebTokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated, IsBuyer)
 
+
 class StoreGetReview(generics.ListAPIView):
-    
+
     queryset = StoreReview.objects.all()
     serializer_class = StoreReviewSerializer
     permission_classes = (permissions.AllowAny,)
-    
+
     def list(self, request, storePk=None):
         review_set = get_object_or_404(Store, pk=storePk).reviews
         serializer = self.get_serializer(review_set, many=True)
@@ -43,23 +44,23 @@ class StoreGetReview(generics.ListAPIView):
 
 
 class StoreRespondToReview(generics.CreateAPIView):
-    
+
     queryset = StoreResponse.objects.all()
     serializer_class = StoreReviewResponseSerializer
     authentication_classes = (JSONWebTokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated, IsSeller,)
 
+
 class ProductPostReview(generics.CreateAPIView):
-    
+
     queryset = ProductReview.objects.all()
     serializer_class = ProductReviewSerializer
     authentication_classes = (JSONWebTokenAuthentication,)
     permission_classes = (permissions.IsAuthenticated, IsBuyer,)
 
 
-
 class ProductGetReview(generics.ListAPIView):
-    
+
     queryset = ProductReview.objects.all()
     serializer_class = ProductReviewSerializer
     permission_classes = (permissions.AllowAny,)
@@ -71,13 +72,9 @@ class ProductGetReview(generics.ListAPIView):
 
 
 class ProductRespondToReview(generics.CreateAPIView):
-    
+
     queryset = ProductReviewResponse.objects.all()
     serializer_class = ProductReviewResSerializer
     authentication_classes = (JSONWebTokenAuthentication,)
-    permission_classes = (permissions.IsAuthenticated, IsSeller, IsAccountOwner)
-
-
-
-
-
+    permission_classes = (permissions.IsAuthenticated,
+                          IsSeller, IsAccountOwner)

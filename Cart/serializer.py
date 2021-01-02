@@ -2,7 +2,7 @@ from rest_framework import serializers
 
 from .models.cart import Cart
 
-from BuyerProfile.models.profile import BuyerProfile
+from Buyer.models.profile import Profile
 
 from Products.models.itemAttribute import Variation
 from Products.serializers.itemAttributeSerializer import VariationSerializer
@@ -19,7 +19,7 @@ class CartSerializer(serializers.ModelSerializer):
 
     def get_data_defaults(self, product_obj=None):
         user_instance = self.context['request'].user
-        buyer_profile = BuyerProfile.objects.get(user=user_instance)
+        buyer_profile = Profile.objects.get(user=user_instance)
 
         return {
             'product': product_obj,

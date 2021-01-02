@@ -203,7 +203,6 @@ class SponsoredTestCase(APITestCase):
 
         response = self.client.patch('/sponsored/products/1/', next_data, format='json')
 
-        print(response.data)
         self.assertEqual(response.status_code, 200)
 
     def update_sponsored_store(self):
@@ -221,7 +220,6 @@ class SponsoredTestCase(APITestCase):
 
         response = self.client.patch('/sponsored/stores/1/', next_data, format='json')
 
-        print(response.data)
         self.assertEqual(response.status_code, 200)
 
 

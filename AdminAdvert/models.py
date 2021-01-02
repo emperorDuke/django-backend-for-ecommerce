@@ -27,6 +27,9 @@ class AdminAdvert(models.Model):
     added_at = models.DateField(auto_now=True)
 
     class Meta:
+        db_table = 'admin_ad'
+        verbose_name = 'admin_ad'
+        verbose_name_plural = 'admin_ads'
         unique_together = ('name', 'attachment')
         ordering = ['-added_at']
 

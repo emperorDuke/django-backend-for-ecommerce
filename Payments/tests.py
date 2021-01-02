@@ -11,7 +11,7 @@ from Stores.models import Store
 from Products.models.itemAttribute import Variation, Attribute
 from Products.models.product import Product
 
-from BuyerProfile.models.profile import BuyerProfile
+from Buyer.models.profile import Profile
 
 from Category.models import Category
 
@@ -116,7 +116,7 @@ class PaymentTestCase(APITestCase):
 
         cls.buyer = get_user_model().objects.create_user(**cls.buyer_data)
 
-        cls.buyer_profile = BuyerProfile.objects.get(user=cls.buyer)
+        cls.buyer_profile = Profile.objects.get(user=cls.buyer)
 
         cart_items = [
             {

@@ -6,8 +6,6 @@ from django.contrib.auth.models import PermissionsMixin
 from ..userManager import MyUserManager
 from .address import Address
 
-from BuyerProfile.models.profile import BuyerProfile
-
 from phonenumber_field.modelfields import PhoneNumberField
 
 from rest_framework_jwt.settings import api_settings

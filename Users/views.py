@@ -22,7 +22,7 @@ from .serializers.buyerSerializer import BuyerSerializer
 from .permissions import IsAccountOwner, IsBuyer
 from .validations import login
 
-from BuyerProfile.serializers import ShippingDetailSerailizer
+from Buyer.serializers import ShippingSerailizer
 
 
 class UserViewSet(viewsets.ModelViewSet):
@@ -45,8 +45,8 @@ class UserViewSet(viewsets.ModelViewSet):
 
     @action(detail=False)
     def address_book(self, request):
-        addresses = request.user.buyerprofile.shipping_details
-        serializer = ShippingDetailSerailizer(addresses, many=True)
+        addresses = request.user.profile.shipping_details
+        serializer = ShippingSerailizer(addresses, many=True)
         return Response(data=serializer.data, status=200)
 
     @action(methods=['post'], detail=False)

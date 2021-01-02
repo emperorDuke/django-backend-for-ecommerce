@@ -7,7 +7,7 @@ from django.contrib.contenttypes.models import ContentType
 
 
 from Stores.models.store import Store
-from BuyerProfile.models import BuyerProfile
+from Buyer.models.profile import Profile
 
 
 def create_user_permissions(args: str):
@@ -34,7 +34,7 @@ def create_user_permissions(args: str):
 
         if not Permission.objects.filter(codename='can_buy').exists():
 
-            content_type = ContentType.objects.get_for_model(BuyerProfile)
+            content_type = ContentType.objects.get_for_model(Profile)
 
             can_buy_permission = Permission.objects.create(
                 codename='can_buy', name='Can buy', content_type=content_type)

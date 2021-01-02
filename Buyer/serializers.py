@@ -1,37 +1,36 @@
 from rest_framework import serializers
 
-from .models.shipping_detail import ShippingDetail
-from .models.profile import BuyerProfile
+from .models.shipping import Shipping
+from .models.profile import Profile
 
 from Users.serializers.userSerializer import AddressSerializer
 from Users.models.address import Address
 
 
-class ShippingDetailSerailizer(serializers.ModelSerializer):
-
+class ShippingSerailizer(serializers.ModelSerializer):
     address = AddressSerializer()
     buyer = serializers.PrimaryKeyRelatedField(read_only=True)
     id = serializers.IntegerField(required=False)
 
     class Meta:
-        model = ShippingDetail
+        model = Shipping
         fields = '__all__'
         validators = []
 
     
     def get_buyer_obj(self):
         user = self.context['request'].user
-        return BuyerProfile.objects.get(user=user)
+        return Profile.objects.get(user=user)
 
     def create(self, validated_data):
         buyer = self.get_buyer_obj()
         address = validated_data.pop('address')
         address_obj = Address.objects.create(**address)
 
-        ShippingDetail.objects.filter(
+        Shipping.objects.filter(
             buyer=buyer, default=True).update(default=False)
 
-        shipping_detail_obj = ShippingDetail.objects.create(
+        shipping_detail_obj = Shipping.objects.create(
             buyer=buyer,
             address=address_obj,
             default=True,
@@ -52,7 +51,7 @@ class ShippingDetailSerailizer(serializers.ModelSerializer):
 
         if 'default' in validated_data:
             default = validated_data.pop('default')
-            ShippingDetail.objects.filter(
+            Shipping.objects.filter(
                 buyer=buyer, default=True).update(default=False)
             setattr(instance, 'default', default)
 
