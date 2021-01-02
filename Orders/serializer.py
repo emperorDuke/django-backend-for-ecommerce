@@ -7,9 +7,9 @@ from .models.ordered_item import OrderedItem, Order
 from Cart.serializer import CartSerializer
 from Cart.models import Cart
 
-from BuyerProfile.models.profile import BuyerProfile
-from BuyerProfile.models.shipping_detail import ShippingDetail
-from BuyerProfile.serializers import ShippingDetailSerailizer
+from Buyer.models.profile import Profile
+from Buyer.models.shipping import Shipping
+from Buyer.serializers import ShippingSerailizer
 
 from Payments.models import Payment
 from Payments.serializer import CouponSerializer, PaymentSerializer
@@ -34,7 +34,7 @@ class OrderSerializer(serializers.ModelSerializer):
     items = OrderItemSerializer(read_only=True, many=True)
     coupons = CouponSerializer(read_only=True)
     payment = PaymentSerializer(read_only=True)
-    shipping_detail = ShippingDetailSerailizer(required=False)
+    shipping_detail = ShippingSerailizer(required=False)
     buyer = serializers.PrimaryKeyRelatedField(read_only=True)
     payment_method = serializers.CharField(required=False)
     delivery_method = serializers.CharField(required=False)
@@ -65,12 +65,12 @@ class OrderSerializer(serializers.ModelSerializer):
 
     @staticmethod
     def get_shipping_detail_obj(buyer):
-        return ShippingDetail.objects.filter(
+        return Shipping.objects.filter(
             buyer=buyer, default=True).first()
 
     def get_buyer_obj(self):
         user = self.context['request'].user
-        return BuyerProfile.objects.get(user=user)
+        return Profile.objects.get(user=user)
 
     def create(self, validated_data):
         buyer = self.get_buyer_obj()

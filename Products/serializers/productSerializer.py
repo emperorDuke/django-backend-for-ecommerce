@@ -26,7 +26,7 @@ class ProductSerializer(serializers.ModelSerializer):
             'discount',
             'brand',
             'category',
-            'sku',
+            'sku_no',
             'availability',
             'attachment_1',
             'attachment_2',

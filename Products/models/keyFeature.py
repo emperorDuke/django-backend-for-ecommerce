@@ -14,6 +14,7 @@ class KeyFeature(models.Model):
         verbose_name = 'key_feature'
         verbose_name_plural = 'key_features'
         unique_together = ('product', 'feature')
+        db_table = 'product_key_feature'
 
     def __str__(self):
         return '%s: %s' % (self.product.name, self.feature)

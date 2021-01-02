@@ -15,6 +15,7 @@ class Category(MPTTModel):
 
     class Meta:
         verbose_name_plural = 'categories'
+        db_table = 'Category'
 
     def __str__(self):
         return self.name

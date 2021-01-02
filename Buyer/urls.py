@@ -1,7 +1,7 @@
 from rest_framework.routers import DefaultRouter
-from .views import ShippingDetailView
+from .views import ShippingView
 
 router = DefaultRouter()
-router.register(r'shipping', ShippingDetailView)
+router.register(r'shipping', ShippingView)
 
 urlpatterns = router.urls

@@ -1,5 +1,5 @@
 from .userSerializer import UserSerializer
-from BuyerProfile.models.profile import BuyerProfile
+from Buyer.models.profile import Profile
 
 
 class BuyerSerializer(UserSerializer):
@@ -11,5 +11,5 @@ class BuyerSerializer(UserSerializer):
 
     def create(self, validated_data):
         user = super().create(validated_data)
-        BuyerProfile.objects.create(user=user)
+        Profile.objects.create(user=user)
         return user

@@ -3,7 +3,7 @@ from django.utils.translation import gettext_lazy as _
 
 from Users.models import address
 
-from BuyerProfile.models import profile, shipping_detail as s
+from Buyer.models import profile, shipping as s
 from Payments.models import Payment, Coupon
 
 from utils.code_generator import generator
@@ -52,9 +52,9 @@ class Order(models.Model):
         (NOPAY, 'No payment')
     )
 
-    buyer = models.ForeignKey(profile.BuyerProfile, related_name='orders', verbose_name='buyer', on_delete=models.CASCADE)
+    buyer = models.ForeignKey(profile.Profile, related_name='orders', verbose_name='buyer', on_delete=models.CASCADE)
     ref_no = models.CharField(_('reference no'), blank=False, max_length=50, unique=True, default='4f55g5')
-    shipping_detail = models.ForeignKey(s.ShippingDetail, related_name='orders', blank=True, null=True, on_delete=models.SET_NULL)
+    shipping_detail = models.ForeignKey(s.Shipping, related_name='orders', blank=True, null=True, on_delete=models.SET_NULL)
     order_status = models.CharField(_('order status'), max_length=50, choices=ORDER_STATUS, blank=False, default=PRC)
     refund_status = models.CharField(_('refund status'), max_length=50, choices=REFUNDSTATUS, blank=False, default=REQ)
     coupons = models.ManyToManyField(Coupon, related_name="orders", verbose_name="coupon")
@@ -68,6 +68,7 @@ class Order(models.Model):
     class Meta:
         ordering = ['-ordered_at']
         verbose_name_plural = 'Orders'
+        db_table = 'Order'
 
     def __str__(self):
         return self.ref_no

@@ -23,15 +23,19 @@ class ProductTestCase(APITestCase):
 
         create_user_permissions('seller')
 
-        tree_1 = Category.objects.create(name='fashion')
-        child_1 = Category.objects.create(name='men_clothing', parent=tree_1)
-        grand_child_1 = Category.objects.create(name='jeans', parent=child_1)
+        cls.tree_1 = Category.objects.create(name='fashion')
+        cls.child_1 = Category.objects.create(
+            name='men_clothing', parent=cls.tree_1)
+        cls.grand_child_1 = Category.objects.create(
+            name='jeans', parent=cls.child_1)
 
-        tree_2 = Category.objects.create(name='electronics')
-        child_2 = Category.objects.create(name='note_book', parent=tree_2)
-        grand_child_2 = Category.objects.create(name='laptop', parent=child_2)
+        cls.tree_2 = Category.objects.create(name='electronics')
+        cls.child_2 = Category.objects.create(
+            name='note_book', parent=cls.tree_2)
+        cls.grand_child_2 = Category.objects.create(
+            name='laptop', parent=cls.child_2)
 
-        cls.category_ref_no = grand_child_1.ref_no
+        cls.category_ref_no = cls.grand_child_2.ref_no
 
         cls.user_data = {
             'first_name': 'Duke',
@@ -50,7 +54,7 @@ class ProductTestCase(APITestCase):
             'logo': ContentFile(open('C:/Users/DUKE/Pictures/Saved Pictures/hp_42ee85b5f3ac14b5367b2a998a8bcabc.jpg', 'rb').read())
         }
 
-        store = Store.objects.create(**cls.store_data)
+        cls.store = Store.objects.create(**cls.store_data)
 
         cls.product_data = {
             "attachment_1": open('C:/Users/DUKE/Pictures/Saved Pictures/hp_42ee85b5f3ac14b5367b2a998a8bcabc.jpg', 'rb'),
@@ -66,8 +70,28 @@ class ProductTestCase(APITestCase):
             'description_attachment_1': open('C:/Users/DUKE/Pictures/Saved Pictures/hp_42ee85b5f3ac14b5367b2a998a8bcabc.jpg', 'rb'),
             'description_attachment_2': open('C:/Users/DUKE/Pictures/Saved Pictures/hp_42ee85b5f3ac14b5367b2a998a8bcabc.jpg', 'rb'),
             "availability": 'IN STOCK',
-            'sku': 'FGR33556'
+            'sku_no': 'FGR33556'
         }
+
+        cls.initial_data = {
+            'store': cls.store,
+            "attachment_1": ContentFile(open('C:/Users/DUKE/Pictures/Saved Pictures/hp_42ee85b5f3ac14b5367b2a998a8bcabc.jpg', 'rb').read()),
+            "attachment_2": ContentFile(open('C:/Users/DUKE/Pictures/Saved Pictures/hp_42ee85b5f3ac14b5367b2a998a8bcabc.jpg', 'rb').read()),
+            "attachment_3": ContentFile(open('C:/Users/DUKE/Pictures/Saved Pictures/hp_42ee85b5f3ac14b5367b2a998a8bcabc.jpg', 'rb').read()),
+            "attachment_4": ContentFile(open('C:/Users/DUKE/Pictures/Saved Pictures/hp_42ee85b5f3ac14b5367b2a998a8bcabc.jpg', 'rb').read()),
+            'name': 'scanfrost 14inches television',
+            'price': 60000.00,
+            'discount': 40000.00,
+            'category': cls.grand_child_2,
+            "brand": "Nike",
+            'description_text': 'it does this, it does that',
+            'description_attachment_1': ContentFile(open('C:/Users/DUKE/Pictures/Saved Pictures/hp_42ee85b5f3ac14b5367b2a998a8bcabc.jpg', 'rb').read()),
+            'description_attachment_2': ContentFile(open('C:/Users/DUKE/Pictures/Saved Pictures/hp_42ee85b5f3ac14b5367b2a998a8bcabc.jpg', 'rb').read()),
+            "availability": 'IN STOCK',
+            'sku_no': 'FGR33556'
+        }
+
+        Product.objects.create(**cls.initial_data)
 
     def setUp(self):
 
@@ -79,55 +103,79 @@ class ProductTestCase(APITestCase):
 
         response = self.client.post('/products/', self.product_data)
 
+        # expected_data = {
+        #     'id': 2,
+        #     'store': 1,
+        #     'name': 'samsung galaxy s3',
+        #     'price': '50000.00',
+        #     'discount': '40000.00',
+        #     'brand': 'Nike',
+        #     'category': 'jeans',
+        #     'sku': 'FGR33556',
+        #     'availability': 'IN STOCK',
+        #     'attachment_1': 'http://testserver/media/uploads/Dutex/hp_42ee85b5f3ac14b5367b2a998a8bcabc_jtHHVlF.jpg',
+        #     'attachment_2': 'http://testserver/media/uploads/Dutex/hp_42ee85b5f3ac14b5367b2a998a8bcabc_KzKlwJt.jpg',
+        #     'attachment_3': 'http://testserver/media/uploads/Dutex/hp_42ee85b5f3ac14b5367b2a998a8bcabc_GoguVp8.jpg',
+        #     'attachment_4': 'http://testserver/media/uploads/Dutex/hp_42ee85b5f3ac14b5367b2a998a8bcabc_L3QZvlm.jpg',
+        #     'rating': {
+        #         'average_rating': '0.0',
+        #         'n_one_star_votes': 0,
+        #         'n_two_stars_votes': 0,
+        #         'n_three_stars_votes': 0,
+        #         'n_four_stars_votes': 0,
+        #         'n_five_stars_votes': 0,
+        #         'n_votes': 0
+        #     },
+        #     'description_text': 'it does this, it does that',
+        #     'description_attachment_1': 'http://testserver/media/uploads/Dutex/attachments/hp_42ee85b5f3ac14b5367b2a998a8bcabc_d1J1Npj.jpg',
+        #     'description_attachment_2': 'http://testserver/media/uploads/Dutex/attachments/hp_42ee85b5f3ac14b5367b2a998a8bcabc_QdBScj6.jpg',
+        #     'ref_no': '278552'
+        # }
+
         self.assertEqual(response.status_code, 201)
-        self.assertEqual(Product.objects.count(), 1)
+        self.assertEqual(Product.objects.count(), 2)
+        self.assertEqual(response.data['category'], self.product_data['category'])
+        self.assertEqual(response.data['availability'], self.product_data['availability'])
+        self.assertEqual(response.data['name'], self.product_data['name'])
 
     def test_update(self):
 
-        self.client.post('/products/', self.product_data)
-
-        product_data = {
+        update_data = {
             "attachment_1": open('C:/Users/DUKE/Pictures/Saved Pictures/hp_42ee85b5f3ac14b5367b2a998a8bcabc.jpg', 'rb'),
             "name": "Hisense Tv",
             "discount": '1000.00',
-            'category': 'laptop'
+            'category': self.grand_child_1.name
         }
 
-        response = self.client.patch('/products/1/', product_data)
+        response = self.client.patch('/products/1/', update_data)
 
-        self.assertEqual(response.data['name'], 'Hisense Tv')
-        self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['category'], 'laptop')
-        self.assertEqual(Product.objects.get(pk=1).name, 'Hisense Tv')
+        self.assertEqual(response.data['name'], update_data['name'])
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.data['category'], self.grand_child_1.name)
+        self.assertEqual(Product.objects.get(pk=1).name, update_data['name'])
+        self.assertEqual(response.data['discount'], update_data['discount'])
 
     def test_retrieve(self):
-
-        self.client.post('/products/', self.product_data)
-
+        self.client.credentials()
         response = self.client.get('/products/1/')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data['name'], 'samsung galaxy s3')
-        self.assertEqual(response.data['category'], 'jeans')
-        self.assertEqual(response.data['brand'], 'Nike')
+        self.assertEqual(response.data['name'], self.initial_data['name'])
+        self.assertEqual(response.data['category'], self.grand_child_2.name)
+        self.assertEqual(response.data['brand'], self.initial_data['brand'])
 
     def test_list(self):
-
-        self.client.post('/products/', self.product_data)
-
+        self.client.credentials()
         url = '/products/?category=%s' % (self.category_ref_no)
 
         response = self.client.get(url)
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data[0]['name'], 'samsung galaxy s3')
-        self.assertEqual(response.data[0]['category'], 'jeans')
-        self.assertEqual(response.data[0]['brand'], 'Nike')
+        self.assertEqual(response.data[0]['name'], self.initial_data['name'])
+        self.assertEqual(response.data[0]['category'], self.grand_child_2.name)
+        self.assertEqual(response.data[0]['brand'], self.initial_data['brand'])
 
     def test_delete(self):
-
-        self.client.post('/products/', self.product_data)
-
         response = self.client.delete('/products/1/')
 
         self.assertEqual(response.status_code, 204)
@@ -135,28 +183,22 @@ class ProductTestCase(APITestCase):
             Product.objects.get(pk=1)
 
     def test_recently_viewed(self):
-
-        self.client.post('/products/', self.product_data)
-
+        self.client.credentials()
         response = self.client.get('/products/recently_viewed/')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
-        self.assertEqual(response.data[0]['category'], 'jeans')
-        self.assertEqual(response.data[0]['brand'], 'Nike')
+        self.assertEqual(response.data[0]['category'], self.grand_child_2.name)
+        self.assertEqual(response.data[0]['brand'], self.initial_data['brand'])
 
     def test_is_viewed(self):
-
-        self.client.post('/products/', self.product_data)
-
+        self.client.credentials()
         response = self.client.post('/products/1/is_viewed/')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
         self.assertEqual(Product.objects.get(pk=1).viewed.n_views, 1)
-    
+
     def test_listings(self):
-
-        self.client.post('/products/', self.product_data)
-
+        self.client.credentials()
         response = self.client.get('/products/listings/')
 
         self.assertEqual(response.status_code, status.HTTP_200_OK)
@@ -208,7 +250,7 @@ class AttributeTestCase(APITestCase):
             'description_attachment_1': ContentFile(open('C:/Users/DUKE/Pictures/Saved Pictures/hp_42ee85b5f3ac14b5367b2a998a8bcabc.jpg', 'rb').read()),
             'description_attachment_2': ContentFile(open('C:/Users/DUKE/Pictures/Saved Pictures/hp_42ee85b5f3ac14b5367b2a998a8bcabc.jpg', 'rb').read()),
             "availability": 'IN STOCK',
-            'sku': 'FGR33556'
+            'sku_no': 'FGR33556'
         }
 
         cls.product = Product.objects.create(**cls.product_data)

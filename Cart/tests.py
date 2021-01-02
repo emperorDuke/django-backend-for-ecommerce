@@ -11,8 +11,8 @@ from Stores.models import Store
 from Products.models.itemAttribute import Variation, Attribute
 from Products.models.product import Product
 
-from BuyerProfile.models.profile import BuyerProfile
-from BuyerProfile.models.shipping_detail import ShippingDetail
+from Buyer.models.profile import Profile
+from Buyer.models.shipping import Shipping
 
 from Category.models import Category
 
@@ -115,7 +115,7 @@ class CartTestCase(APITestCase):
 
         cls.buyer = get_user_model().objects.create_user(**cls.buyer_data)
 
-        cls.buyer_profile = BuyerProfile.objects.create(user=cls.buyer)
+        cls.buyer_profile = Profile.objects.create(user=cls.buyer)
 
         address = {
             'address': 'no 34 beckham street, ikeja Lagos',
@@ -137,7 +137,7 @@ class CartTestCase(APITestCase):
             'default': True
         }
 
-        ShippingDetail.objects.create(**cls.shipping_detail)
+        Shipping.objects.create(**cls.shipping_detail)
 
         cls.cart = {
             'product': cls.product.pk,

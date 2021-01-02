@@ -5,20 +5,6 @@ from django.utils.translation import gettext_lazy as _
 from rest_framework import exceptions
 
 
-# def authenticate(**credentials):
-
-#     email = credentials.get(get_user_model().USERNAME_FIELD)
-#     password = credentials.get('password')
-
-#     users = get_user_model().objects.all()
-
-#     for user in users:
-#         if user.email == email and user.check_password(password):
-#             return user
-
-#     return None
-
-
 def login(request, serializer=None):
     """
     validates the request and set the user 

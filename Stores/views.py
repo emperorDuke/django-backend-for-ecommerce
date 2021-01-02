@@ -9,9 +9,11 @@ from drf_nested_forms.parsers import NestedMultiPartParser
 
 from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
-from .serializers.storeSerializer import StoreSerializer, AdvertSerializer
-from .models.store import Store, Advert
+from .serializers.storeSerializer import StoreSerializer
+from .serializers.advertSerializer import AdvertSerializer
 from .permissions import IsAdvertOwner
+from .models.store import Store
+from .models.advert import Advert
 
 from Users.permissions import IsSeller
 
@@ -44,8 +46,6 @@ class StoreView(viewsets.ModelViewSet):
         return Response(data=list(states), status=status.HTTP_200_OK)
 
 
-
-
 class Advert_view (viewsets.ModelViewSet):
     queryset = Advert.objects.all()
     authentication_classes = (JSONWebTokenAuthentication,)
@@ -56,6 +56,7 @@ class Advert_view (viewsets.ModelViewSet):
         if self.action == 'list':
             permission_classes = [permissions.IsAuthenticated, IsSeller]
         else:
-            permission_classes = [permissions.IsAuthenticated, IsSeller, IsAdvertOwner]
-        
+            permission_classes = [
+                permissions.IsAuthenticated, IsSeller, IsAdvertOwner]
+
         return [permission() for permission in permission_classes]

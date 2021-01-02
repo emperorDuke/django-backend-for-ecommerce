@@ -16,5 +16,4 @@ def create_other_info(sender, instance, created, *args, **kwargs):
 
 @receiver(pre_save, sender=Store)
 def create_ref_no(sender, instance, *args, **kwargs):
-
     instance.ref_no = generator(instance)

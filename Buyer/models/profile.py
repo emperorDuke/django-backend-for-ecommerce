@@ -5,7 +5,7 @@ from django.utils.translation import gettext_lazy as _
 from Products.models.product import Product
 from Stores.models.store import Store
 
-class BuyerProfile(models.Model):
+class Profile(models.Model):
     user = models.OneToOneField(settings.AUTH_USER_MODEL, verbose_name='buyer', on_delete=models.CASCADE)
     items_viewed = models.ManyToManyField(Product, blank=True, related_name='users_viewed')
     wish_list = models.ManyToManyField(Product, blank=True, related_name='users_wishlist')
@@ -13,5 +13,12 @@ class BuyerProfile(models.Model):
     created_at = models.DateTimeField(_('date created'), auto_now_add=True)
     updated_at = models.DateTimeField(_('date updated'), auto_now=True)
 
+    class Meta:
+        db_table = 'profile'
+        verbose_name = 'buyer_profile'
+        verbose_name_plural = 'buyer_profiles'
+        
     def __str__(self):
-        return self.user
+        return self.user.name
+
+    

@@ -3,19 +3,19 @@ from rest_framework_jwt.authentication import JSONWebTokenAuthentication
 
 from drf_nested_forms.parsers import NestedMultiPartParser, NestedJSONParser
 
-from .models import ShippingDetail
-from .serializers import ShippingDetailSerailizer
+from .models import Shipping
+from .serializers import ShippingSerailizer
 
 from Users.permissions import IsBuyer
 
 
-class ShippingDetailView(viewsets.ModelViewSet):
+class ShippingView(viewsets.ModelViewSet):
     permission_classes = (permissions.IsAuthenticated, IsBuyer)
     parser_classes = (NestedMultiPartParser, NestedJSONParser, parsers.FormParser)
     authentication_classes = (JSONWebTokenAuthentication,)
-    serializer_class = ShippingDetailSerailizer
-    queryset = ShippingDetail.objects.all()
+    serializer_class = ShippingSerailizer
+    queryset = Shipping.objects.all()
 
     def filter_queryset(self, queryset):
-        buyer = self.request.user.buyerprofile
+        buyer = self.request.user.profile
         return queryset.filter(buyer=buyer)

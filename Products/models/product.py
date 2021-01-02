@@ -36,7 +36,7 @@ class Product(models.Model):
     category = TreeForeignKey(Category, null=True, blank=False, related_name='products', on_delete=models.PROTECT)
     brand = models.CharField(_('product brand'), max_length=50, blank=False)
     availability =  models.CharField(_("availabilty"), max_length=50, choices=AVAILABILITY)
-    sku = models.CharField(_('SKU'), max_length=50, blank=True)
+    sku_no = models.CharField(_('SKU_NO'), max_length=50, blank=True)
     attachment_1 = models.ImageField(upload_to=product_upload_to, blank=False)
     attachment_2 = models.ImageField(upload_to=product_upload_to, blank=True)
     attachment_3 = models.ImageField(upload_to=product_upload_to, blank=True)
@@ -56,6 +56,7 @@ class Product(models.Model):
         verbose_name_plural = 'products'
         ordering = ['-updated_at']
         unique_together = ('store', 'name')
+        db_table = 'product'
 
     def __str__ (self):
         return self.name
